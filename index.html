@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boletim do IPM · Rio Grande do Sul</title>
+<meta name="description" content="Evolução histórica do Índice de Participação dos Municípios (IPM) do Rio Grande do Sul, 2003–2026.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="grain"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="eyebrow">Receita Estadual · Rio Grande do Sul</div>
+    <h1>Boletim do <span class="ink-em">IPM</span></h1>
+    <p class="lede">Como cada um dos 497 municípios gaúchos participa do rateio do ICMS — e por quê, ano a ano, desde 2003.</p>
+  </div>
+  <div class="header-ledger" aria-hidden="true">
+    <span>2003</span><span class="ledger-rule"></span><span>2026</span>
+  </div>
+</header>
+
+<main>
+
+  <!-- FILTROS -->
+  <section class="panel filters-panel" aria-label="Filtros">
+    <div class="filters-row">
+      <div class="field">
+        <label for="sel-municipio">Município</label>
+        <select id="sel-municipio"></select>
+      </div>
+      <div class="field field-narrow">
+        <label for="sel-ano-ini">De</label>
+        <select id="sel-ano-ini"></select>
+      </div>
+      <div class="field field-narrow">
+        <label for="sel-ano-fim">Até</label>
+        <select id="sel-ano-fim"></select>
+      </div>
+      <div class="field field-narrow">
+        <label for="sel-indicador">Correlacionar com</label>
+        <select id="sel-indicador">
+          <option value="">Nenhum indicador</option>
+          <option value="vaf_pct">Valor Adicionado Fiscal (VAF)</option>
+          <option value="area_pct">Área</option>
+          <option value="pop_pct">População</option>
+          <option value="prop_rural_pct">Propriedades rurais</option>
+          <option value="produtividade_pct">Produtividade primária</option>
+          <option value="inverso_vaf_pc_pct">Inverso do VAF per capita</option>
+          <option value="pit_pct">Programa de Integração Tributária (PIT)</option>
+          <option value="pre_educ_pct">Educação (PRE)</option>
+        </select>
+      </div>
+      <div class="field-actions">
+        <button id="btn-limpar" class="btn btn-ghost" type="button">Limpar filtros</button>
+        <button id="btn-pdf" class="btn btn-primary" type="button">Exportar PDF</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTEUDO EXPORTAVEL -->
+  <div id="report-content">
+
+    <section class="panel" aria-label="Evolução do IPM">
+      <div class="panel-head">
+        <h2>Evolução do IPM</h2>
+        <p id="linha-subtitulo" class="panel-sub">—</p>
+      </div>
+      <div id="chart-linha" class="chart-box chart-box-tall"></div>
+      <div id="correl-box" class="correl-box" hidden>
+        <span class="correl-r" id="correl-r">—</span>
+        <span class="correl-desc" id="correl-desc">—</span>
+      </div>
+      <ul class="legend-manual">
+        <li><span class="swatch swatch-line"></span> IPM do município</li>
+        <li><span class="swatch swatch-mean"></span> Média do período selecionado</li>
+        <li><span class="swatch swatch-mark swatch-max">▲</span> Maior valor da série</li>
+        <li><span class="swatch swatch-mark swatch-min">■</span> Menor valor da série</li>
+        <li><span class="swatch swatch-vline"></span> 2024 — novos critérios de cálculo</li>
+      </ul>
+    </section>
+
+    <section class="panel" aria-label="Variação percentual anual">
+      <div class="panel-head">
+        <h2>Variação percentual ano a ano</h2>
+        <p class="panel-sub">Quanto o IPM subiu ou caiu em relação ao ano anterior.</p>
+      </div>
+      <div id="chart-barras" class="chart-box"></div>
+    </section>
+
+    <section class="panel" aria-label="Tabela de dados">
+      <div class="panel-head">
+        <h2>Tabela de dados</h2>
+        <p class="panel-sub" id="tabela-subtitulo">—</p>
+      </div>
+      <div class="table-wrap">
+        <table id="tabela-dados">
+          <thead>
+            <tr>
+              <th>Ano</th>
+              <th>IPM (%)</th>
+              <th>Variação (p.p.)</th>
+              <th>Variação (%)</th>
+              <th>Posição no estado</th>
+              <th id="th-indicador">Indicador (%)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- MAPA -->
+  <section class="panel map-panel" aria-label="Mapa do estado">
+    <div class="panel-head">
+      <h2>O Rio Grande do Sul, ano a ano</h2>
+      <p class="panel-sub">Aperte o play e veja o índice se redistribuir entre os municípios ao longo do tempo.</p>
+    </div>
+    <div class="map-controls">
+      <div class="toggle-group" role="group" aria-label="Camada do mapa">
+        <button class="toggle-btn is-active" data-layer="ipm" type="button">IPM</button>
+        <button class="toggle-btn" data-layer="var_pct" type="button">Variação anual (%)</button>
+      </div>
+    </div>
+    <div id="chart-mapa" class="chart-box chart-box-map"></div>
+  </section>
+
+  <!-- NOTAS METODOLOGICAS -->
+  <section class="panel notes-panel" aria-label="Notas metodológicas">
+    <div class="panel-head">
+      <h2>Como ler este boletim</h2>
+    </div>
+    <div class="notes-grid">
+      <div class="note-card">
+        <h3>O que é o IPM</h3>
+        <p>O Índice de Participação dos Municípios define a fatia que cada uma das 497 prefeituras gaúchas recebe do ICMS arrecadado pelo Estado — cerca de 25% de toda a arrecadação é redistribuída dessa forma todo ano. A soma dos índices de todos os municípios é sempre igual a 100%.</p>
+      </div>
+      <div class="note-card">
+        <h3>O que compõe o índice</h3>
+        <p>O maior peso, de longe, é o Valor Adicionado Fiscal (VAF) — a diferença entre o que as empresas do município vendem e compram. Os demais critérios (população, área, propriedades rurais, produtividade agrícola, adesão a programas de integração tributária e, desde 2024, indicadores de educação) completam o cálculo com pesos menores.</p>
+      </div>
+      <div class="note-card">
+        <h3>A mudança de 2024</h3>
+        <p>A partir do índice de 2024, uma lei estadual (15.766/2021) começou a transferir peso do critério população para um novo critério de educação, em transição gradual até 2029. É por isso que o gráfico de linha marca esse ano — o salto ou queda que você vir ali pode refletir essa mudança de regra, não necessariamente uma mudança na economia do município.</p>
+      </div>
+      <div class="note-card">
+        <h3>Sobre Aceguá (2003–2010)</h3>
+        <p>Aceguá teve seu processo de emancipação contestado na Justiça por anos. Nesse período, o índice do município já era calculado, mas não entrava oficialmente no rateio — os valores mostrados aqui para 2003–2010 são os índices calculados, sinalizados como não oficiais na tabela.</p>
+      </div>
+    </div>
+    <div class="note-source">
+      <strong>Fonte dos dados:</strong> Portal de Serviços da Receita Estadual do RS —
+      <a href="https://atendimento.receita.rs.gov.br/ipm-definitivos" target="_blank" rel="noopener">IPM Definitivos</a>.
+      Compilação e cálculos próprios a partir dos arquivos oficiais publicados pela Sefaz/RS. Este é um material de divulgação independente, sem vínculo oficial com o governo do Estado.
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Boletim do IPM · Rio Grande do Sul · dados 2003–2026</p>
+</footer>
+
+<script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
